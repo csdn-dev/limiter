@@ -15,6 +15,7 @@ module Limiter
     attr_reader :white_list
     attr_reader :black_list
     attr_reader :allow_path
+    attr_reader :allow_agent
 
     ##
     # @param  [#call]                    app
@@ -22,13 +23,15 @@ module Limiter
     # @option options [BlackList]        :black_list  (BlackList.new($redis))
     # @option options [WhiteList]        :white_list  (WhiteList.new($redis))
     # @option options [String/Regexp]    :allow_path  ("/human_test")
+    # @option options [Regex]            :allow_agent (/agent1|agent2/)
     # @option options [Integer]          :code        (403)
     # @option options [String]           :message     ("Rate Limit Exceeded")
     
     def initialize(app, options = {})
-      @black_list = options[:black_list]
-      @white_list = options[:white_list]
-      @allow_path = options[:allow_path]
+      @black_list  = options[:black_list]
+      @white_list  = options[:white_list]
+      @allow_path  = options[:allow_path]
+      @allow_agent = options[:allow_agent]
       @app, @options = app, options
     end
 
@@ -53,6 +56,7 @@ module Limiter
     def allowed?(request)
       case
       when allow_path?(request)  then true
+      when allow_agent?(request) then true
       when whitelisted?(request) then true
       when blacklisted?(request) then false
       else nil # override in subclasses
@@ -73,6 +77,11 @@ module Limiter
       else
         request.path == allow_path
       end
+    end
+
+    def allow_agent?(request)
+      return false unless allow_agent
+      request.user_agent.to_s =~ allow_agent
     end
 
     protected
