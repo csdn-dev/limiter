@@ -113,8 +113,8 @@ module Limiter
     # @param  [Hash{String => String}] headers
     # @return [Array(Integer, Hash, #each)]
     def http_error(code, message = nil, headers = {})
-      [code, {'Content-Type' => 'text/plain; charset=utf-8'}.merge(headers),
-        http_status(code) + (message.nil? ? "\n" : " (#{message})\n")]
+      [code, {'Content-Type' => 'text/html; charset=utf-8'}.merge(headers),
+        [http_status(code) + (message.nil? ? "\n" : " (#{message})\n")]]
     end
 
     ##
