@@ -28,6 +28,11 @@ module Limiter
       return true
     end
 
+    def client_identifier(request)
+      # 61.135.163.4 -> 61.135.163.0
+      request.ip.to_s.sub(/\.\d+$/, ".0")
+    end
+
     private
 
     def read_and_incr_post_num(request, client_id)

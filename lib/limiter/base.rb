@@ -111,7 +111,7 @@ module Limiter
     # @return [Array(Integer, Hash, #each)]
     def rate_limit_exceeded
       headers = respond_to?(:retry_after) ? {'Retry-After' => retry_after.to_f.ceil.to_s} : {}
-      http_error(options[:code] || 403, options[:message] || 'Rate Limit Exceeded', headers)
+      http_error(options[:code] || 403, options[:message], headers)
     end
 
     ##
@@ -122,8 +122,12 @@ module Limiter
     # @param  [Hash{String => String}] headers
     # @return [Array(Integer, Hash, #each)]
     def http_error(code, message = nil, headers = {})
-      [code, {'Content-Type' => 'text/html; charset=utf-8'}.merge(headers),
-        [http_status(code) + (message.nil? ? "\n" : " (#{message})\n")]]
+      body = if message 
+               [message]
+             else
+               [http_status(code) + " : Rate Limit Exceeded\n"]
+             end
+      [code, {'Content-Type' => 'text/html; charset=utf-8'}.merge(headers), body]
     end
 
     ##
