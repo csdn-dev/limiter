@@ -17,7 +17,7 @@ module Limiter
       @max_get_num = options[:max_get_num] || MAX_GET_NUM
       @max_post_num = options[:max_post_num] || MAX_POST_NUM
       @post_ttl = options[:post_ttl] || POST_TTL
-      @post_ttl = options[:get_ttl] || GET_TTL
+      @get_ttl = options[:get_ttl] || GET_TTL
     end
 
     def visit_counter
