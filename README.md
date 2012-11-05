@@ -19,6 +19,12 @@ And then execute:
 require File.expand_path("../redis", __FILE__)
 Rails.configuration.app_middleware.insert_before(Rack::MethodOverride,
                                                  Limiter::RateLimiter,
+                                                 :max_get_num => 1000,
+                                                 :get_ttl => 20.minutes,
+
+                                                 :max_post_num => 20,
+                                                 :post_ttl => 5.seconds,
+
                                                  :black_list => Limiter::BlackList.new($redis),
                                                  :white_list => Limiter::WhiteList.new($redis),
                                                  :allow_path => Rails.env.development? ? /^\/(assets|human_validations|simple_captcha)/ :

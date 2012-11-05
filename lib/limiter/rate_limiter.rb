@@ -7,8 +7,17 @@ module Limiter
     POST_TTL = 5.seconds
     MAX_POST_NUM = 20
 
+    attr_reader :max_get_num
+    attr_reader :max_post_num
+    attr_reader :get_ttl
+    attr_reader :post_ttl
+
     def initialize(app, options = {})
       super
+      @max_get_num = options[:max_get_num] || MAX_GET_NUM
+      @max_post_num = options[:max_post_num] || MAX_POST_NUM
+      @post_ttl = options[:post_ttl] || POST_TTL
+      @post_ttl = options[:get_ttl] || GET_TTL
     end
 
     def visit_counter
@@ -24,7 +33,7 @@ module Limiter
       post_count = read_and_incr_post_num(request, client_id)
       get_count = read_and_incr_get_num(request, client_id)
       
-      return false if (get_count > MAX_GET_NUM || post_count > MAX_POST_NUM)
+      return false if (get_count > max_get_num || post_count > max_post_num)
       return true
     end
 
@@ -38,7 +47,7 @@ module Limiter
     def read_and_incr_post_num(request, client_id)
       if request.post?
         post_count = visit_counter.count(client_id, "POST")
-        visit_counter.incr(client_id, "POST", POST_TTL)
+        visit_counter.incr(client_id, "POST", post_ttl)
         return post_count
       end
       return 0
@@ -46,7 +55,7 @@ module Limiter
 
     def read_and_incr_get_num(request, client_id)
       get_count = visit_counter.count(client_id, "GET")
-      visit_counter.incr(client_id, "GET", GET_TTL)
+      visit_counter.incr(client_id, "GET", get_ttl)
       return get_count
     end
    
