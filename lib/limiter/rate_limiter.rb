@@ -33,8 +33,12 @@ module Limiter
       post_count = read_and_incr_post_num(request, client_id)
       get_count = read_and_incr_get_num(request, client_id)
       
-      return false if (get_count > max_get_num || post_count > max_post_num)
-      return true
+      if (get_count > max_get_num || post_count > max_post_num)
+        limit_callback.call(client_id)
+        false
+      else
+        true
+      end
     end
 
     def client_identifier(request)

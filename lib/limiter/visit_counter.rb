@@ -6,30 +6,32 @@ module Limiter
     end
 
     def remove(ip, method)
-      cache_key = [key, ip, method].join("/")
-      @cache_store.del(cache_key)
+      @cache_store.del cache_key(ip, method)
     end
 
     def incr(ip, method, ttl)
-      cache_key = [key, ip, method].join("/")
       @cache_store.multi do
-        @cache_store.incr(cache_key)
-        @cache_store.expire(cache_key, ttl)
+        @cache_store.incr cache_key(ip, method)
+        @cache_store.expire(cache_key(ip, method), ttl)
       end
     end
 
     def count(ip, method)
-      cache_key = [key, ip, method].join("/")
-      @cache_store.get(cache_key).to_i
+      @cache_store.get(cache_key(ip, method)).to_i
     end
 
     def set(ip, method, ttl, num)
-      cache_key = [key, ip, method].join("/")
-      @cache_store.setex(cache_key, ttl, num)
+      @cache_store.setex(cache_key(ip, method), ttl, num)
     end
 
-    def key
-      "limiter/vc"
+    def remove_both(ip)
+      remove ip, 'GET'
+      remove ip, 'POST'
+    end
+
+    private
+    def cache_key(ip, method)
+      ['limiter/vc', ip, method].join('/')
     end
   end
 end

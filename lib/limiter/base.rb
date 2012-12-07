@@ -16,6 +16,7 @@ module Limiter
     attr_reader :black_list
     attr_reader :allow_path
     attr_reader :allow_agent
+    attr_reader :limit_callback
 
     ##
     # @param  [#call]                    app
@@ -33,6 +34,7 @@ module Limiter
       @allow_path  = options[:allow_path]
       @allow_agent = options[:allow_agent]
       @app, @options = app, options
+      @limit_callback = options[:limit_callback]
     end
 
     ##
