@@ -30,7 +30,8 @@ Rails.configuration.app_middleware.insert_before(Rack::MethodOverride,
                                                  :allow_path => Rails.env.development? ? /^\/(assets|human_validations|simple_captcha)/ :
                                                                                          /^\/(human_validations|simple_captcha)/,
                                                  :message => "<a href='/human_validations/new'>我不是机器人</a>",
-                                                 :visit_counter => Limiter::VisitCounter.new($redis)
+                                                 :visit_counter => Limiter::VisitCounter.new($redis),
+                                                 :limit_callback => lambda { |ip| your_callback(ip) }
                                                 )
 ```
 
