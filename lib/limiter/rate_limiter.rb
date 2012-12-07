@@ -34,7 +34,7 @@ module Limiter
       get_count = read_and_incr_get_num(request, client_id)
       
       if (get_count > max_get_num || post_count > max_post_num)
-        limit_callback.call(client_id)
+        limit_callback.call(client_id) if limit_callback
         false
       else
         true
