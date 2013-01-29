@@ -26,8 +26,7 @@ module Limiter
 
     def allowed?(request)
       common_allowed = super
-      return true if common_allowed == true
-      return false if common_allowed == false
+      return common_allowed unless common_allowed.nil?
 
       client_id = client_identifier(request)
       post_count = read_and_incr_post_num(request, client_id)
