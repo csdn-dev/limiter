@@ -16,6 +16,8 @@ And then execute:
 
 ```ruby
 # config/initializers/limiter.rb
+
+# -*- encoding : utf-8 -*-
 require File.expand_path("../redis", __FILE__)
 Rails.configuration.app_middleware.insert_before(Rack::MethodOverride,
                                                  Limiter::RateLimiter,
