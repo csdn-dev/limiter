@@ -89,10 +89,15 @@ module Limiter
     protected
 
     ##
+    # 使用proxy，内网ip访问时，request.ip只会返回127.0.0.1
+    # 需要在前端设置 HTTP_X_REAL_IP 来取得内网真实 client ip
     # @param  [Rack::Request] request
     # @return [String]
     def client_identifier(request)
-      request.ip.to_s
+      ip = request.ip.to_s
+      ip = request.env['HTTP_X_REAL_IP'] if ip == '127.0.0.1' && request.env.has_key?('HTTP_X_REAL_IP') &&
+           request.trusted_proxy?(request.env['HTTP_X_REAL_IP'])
+      return ip
     end
 
     ##

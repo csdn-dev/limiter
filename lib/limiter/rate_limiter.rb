@@ -42,7 +42,7 @@ module Limiter
 
     def client_identifier(request)
       # 61.135.163.4 -> 61.135.163.0
-      request.ip.to_s.sub(/\.\d+$/, ".0")
+      super(request).sub(/\.\d+$/, ".0")
     end
 
     private
