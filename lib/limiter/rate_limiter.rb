@@ -41,8 +41,13 @@ module Limiter
     end
 
     def client_identifier(request)
-      # 61.135.163.4 -> 61.135.163.0
-      super(request).sub(/\.\d+$/, ".0")
+      if @filter_ip_segment
+        # 61.135.163.4 -> 61.135.163.0
+        super(request).sub(/\.\d+$/, ".0")
+      else
+        # 61.135.163.4
+        super(request)
+      end
     end
 
     private
