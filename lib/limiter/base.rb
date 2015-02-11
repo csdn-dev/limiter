@@ -34,7 +34,7 @@ module Limiter
       @white_list  = options[:white_list]
       @allow_path  = options[:allow_path]
       @allow_agent = options[:allow_agent]
-      @filter_ip_segment = options[:filter_ip_segment]
+      @filter_ip_segment = (options[:filter_ip_segment] || options[:filter_ip_segment].nil?) ? true : false
       @app, @options = app, options
       @limit_callback = options[:limit_callback]
     end
